@@ -34,14 +34,14 @@ public class MySharings extends Sharings {
 	public MySharings() {
 
 		super();
-		
-		setTitle("Moje zdie¾ania");
-		
-		JButton btnZobraziReakcie = new JButton("Zobrazi\u0165 reakcie");
+
+		setTitle(rb.getString("mysharings.title"));
+
+		JButton btnZobraziReakcie = new JButton(rb.getString("mysharings.title"));
 		btnZobraziReakcie.setBounds(256, 220, 144, 23);
 		getContentPane().add(btnZobraziReakcie);
-		
-		JButton btnPridaNov = new JButton("Prida\u0165 nov\u00E9");
+
+		JButton btnPridaNov = new JButton(rb.getString("mysharings.addNew"));
 		btnPridaNov.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				AddSharing addSharing = new AddSharing();
@@ -53,68 +53,59 @@ public class MySharings extends Sharings {
 		btnZobraziReakcie.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int index = table.getSelectedRow();
-				if (index < 0) 
-				{
-					JOptionPane.showMessageDialog(contentPane, "Row is not selected");
-				}
-				else
-				{	
+				if (index < 0) {
+					JOptionPane.showMessageDialog(contentPane, rb.getString("app.warning.notSelected"),
+							rb.getString("app.warning.title"), JOptionPane.WARNING_MESSAGE);
+				} else {
 					ReactionsControl.getReactionsBySharing(Data.sharings.get(index));
 					JFrame reactionsWindow = new Reactions();
-					reactionsWindow.setVisible(true);				
-						
-					
+					reactionsWindow.setVisible(true);
+
 				}
 			}
 		});
-		
+
 		btnDetail.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int index = table.getSelectedRow();
-				if (index < 0) 
-				{
-					JOptionPane.showMessageDialog(contentPane, "Row is not selected");
-				}
-				else
-				{				
+				if (index < 0) {
+					JOptionPane.showMessageDialog(contentPane, rb.getString("app.warning.notSelected"),
+							rb.getString("app.warning.title"), JOptionPane.WARNING_MESSAGE);
+				} else {
 					JFrame mySharingssWindow = new MySharingDetail(Data.sharings.get(index));
-					mySharingssWindow.setVisible(true);	
-					
+					mySharingssWindow.setVisible(true);
+
 				}
 			}
 		});
-		
-		columnNames = new String[]{"Typ", "Predmet", "Cena", "Stav", "Skupina", "Reakcie"};
+
+		columnNames = new String[] { rb.getString("sharing.type"), rb.getString("sharing.label"),
+				rb.getString("sharing.price"), rb.getString("sharing.state"), rb.getString("sharing.group"),
+				rb.getString("sharing.reactions") };
 		populateTable();
 	}
 
-	protected void addRows()
-	{
-		for (Sharing o : Data.sharings)
-		{
+	protected void addRows() {
+		for (Sharing o : Data.sharings) {
 			Sharing sharing = (Sharing) o;
-						
+
 			String[] values = new String[columnNames.length];
 			values[0] = sharing.getType().getName();
 			values[1] = sharing.getLabel();
 			values[2] = sharing.getPrice();
-			if (sharing.isActive() == true)
-			{
-				values[3] = "aktívne";
-			}
-			else
-			{
-				values[3] = "ukonèené";
+			if (sharing.isActive() == true) {
+				values[3] = rb.getString("sharing.state.active");
+			} else {
+				values[3] = rb.getString("sharing.state.inactive");
 			}
 			values[4] = sharing.getGroup().getName();
 			values[5] = Integer.toString(sharing.getReactions().size());
-			
+
 			model.addRow(values);
 		}
 	}
-		
-	protected void filter()
-	{
+
+	protected void filter() {
 		SharingsControl.getAllSharingsOfUser(Data.sharingTypes.get(comboBox.getSelectedIndex()));
 		MySharings mySharingsWindow = new MySharings();
 		mySharingsWindow.setVisible(true);

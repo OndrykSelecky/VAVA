@@ -18,7 +18,7 @@ public class Client {
 		context = createRemoteEjbContext("localhost", "8080");
 		ManageUserRemote remote = (ManageUserRemote)context.lookup("ejb:ShareAroundEAR/ShareAroundServer//ManageUser!session.ManageUserRemote");
 				
-		remote.fillDatabase();
+		//remote.fillDatabase();
 		
 		ManageSharingsRemote sharingRemote = (ManageSharingsRemote)context.lookup("ejb:ShareAroundEAR/ShareAroundServer//ManageSharings!session.ManageSharingsRemote");
 		

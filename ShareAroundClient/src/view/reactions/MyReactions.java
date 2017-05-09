@@ -10,16 +10,19 @@ import javax.swing.border.EmptyBorder;
 
 import data.Data;
 import entity.Reaction;
+import utils.PropertiesWrapper;
 import view.Home;
 import view.TableWindow;
 import view.sharings.SharingDetail;
 
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.util.Locale;
+import java.util.ResourceBundle;
 import java.awt.event.ActionEvent;
 
 public class MyReactions extends TableWindow {
-
+	
 	private JPanel contentPane;
 
 	
@@ -29,7 +32,7 @@ public class MyReactions extends TableWindow {
 	public MyReactions() {
 		super();
 		
-		setTitle("Moje reakcie");
+		setTitle(rb.getString("myreactions.title"));
 		
 		JButton btnDetailyReakcie = new JButton("Detaily reakcie");
 		btnDetailyReakcie.addActionListener(new ActionListener() {
@@ -62,7 +65,7 @@ public class MyReactions extends TableWindow {
 		btnSp.setBounds(111, 227, 89, 23);
 		getContentPane().add(btnSp);
 		
-		columnNames = new String[]{"Autor zdie¾ania", "Typ zdie¾ania", "Predmet zdie¾ania", "Dátum reakcie", "Platnos"};
+		columnNames = new String[]{"Autor zdieï¿½ania", "Typ zdieï¿½ania", "Predmet zdieï¿½ania", "Dï¿½tum reakcie", "Platnosï¿½"};
 		
 		populateTable();
 		
@@ -81,11 +84,11 @@ public class MyReactions extends TableWindow {
 			values[3] = reaction.getDate().toString();
 			if (reaction.getSharing().isActive() == true)
 			{
-				values[4] = "Platné";
+				values[4] = "Platnï¿½";
 			}
 			else
 			{
-				values[4] = "Ukonèené";
+				values[4] = "Ukonï¿½enï¿½";
 			}
 			
 			model.addRow(values);

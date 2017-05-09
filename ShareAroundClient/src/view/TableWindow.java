@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -14,8 +16,11 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
 import data.Data;
+import utils.PropertiesWrapper;
 
 public abstract class TableWindow extends JFrame {
+	
+	private static final String LOCALIZATION = "locale.app";
 
 	protected JPanel contentPane;
 	protected JTable table;
@@ -24,10 +29,16 @@ public abstract class TableWindow extends JFrame {
 	
 	protected String[] columnNames;
 	protected JButton btnSp_1;
+	
+	protected ResourceBundle rb;
+
 	/**
 	 * Create the frame.
 	 */
-	public TableWindow() {
+	public TableWindow() {		
+		rb = ResourceBundle.getBundle(LOCALIZATION,
+				Locale.forLanguageTag(PropertiesWrapper.getProperties().getProperty("locale")));
+
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 555, 316);
 		contentPane = new JPanel();
@@ -51,7 +62,7 @@ public abstract class TableWindow extends JFrame {
 		scrollPane.setSize( (int)((this.getWidth())-50), (int)(0.6*(this.getHeight())));
 		contentPane.add(scrollPane);
 		
-		btnSp_1 = new JButton("Sp\u00E4\u0165");
+		btnSp_1 = new JButton(rb.getString("app.back"));
 		btnSp_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				close();

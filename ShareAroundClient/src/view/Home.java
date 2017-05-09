@@ -8,6 +8,7 @@ import control.ReactionsControl;
 import control.SharingsControl;
 import data.Data;
 import entity.Group;
+import utils.PropertiesWrapper;
 import view.sharings.Sharings;
 import view.reactions.MyReactions;
 import view.sharings.AllSharings;
@@ -17,114 +18,110 @@ import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.ResourceBundle;
 import java.awt.event.ActionEvent;
 import javax.swing.JLabel;
 import javax.swing.JComboBox;
 
 public class Home extends JFrame {
 
-	private JPanel contentPane;	
-    private JComboBox comboBox;
-    
-    
+	private static final String LOCALIZATION = "locale.app";
+
+	private JPanel contentPane;
+	private JComboBox comboBox;
+
 	/**
 	 * Create the frame.
 	 */
 	public Home() {
+		ResourceBundle rb = ResourceBundle.getBundle(LOCALIZATION,
+				Locale.forLanguageTag(PropertiesWrapper.getProperties().getProperty("locale")));
+
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		setContentPane(contentPane);
 		contentPane.setLayout(null);
-		this.setTitle("Domov");
-		
-		JLabel lblSkupina = new JLabel("Skupina: ");
-		lblSkupina.setBounds(213, 26, 180, 14);
-		contentPane.add(lblSkupina);
-		
-		
+		setContentPane(contentPane);
+		this.setTitle(rb.getString("home.title"));
+
+		JLabel lblGroup = new JLabel(rb.getString("home.groupLabel") + ": ");
+		lblGroup.setBounds(213, 26, 180, 14);
+		contentPane.add(lblGroup);
+
 		comboBox = new JComboBox(getGroupNamesArray());
 		comboBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
 				Data.group = Data.user.getGroups().get(comboBox.getSelectedIndex());
-				lblSkupina.setText("Skupina: "+ Data.group.getName());
-				
+				lblGroup.setText(rb.getString("home.groupLabel") + ": " + Data.group.getName());
 			}
 		});
 		comboBox.setBounds(278, 60, 115, 23);
 		contentPane.add(comboBox);
 		comboBox.setSelectedIndex(0);
-		
-		
-		JButton btnZobraziZdieania = new JButton("Nov\u00E9 zdie\u013Eania");
-		btnZobraziZdieania.addActionListener(new ActionListener() {
+
+		JButton btnShowSharings = new JButton(rb.getString("home.newSharings"));
+		btnShowSharings.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				
+
 				SharingsControl.getAllSharingsOfGroup();
-				
+
 				Sharings sharingWindow = new AllSharings();
 				sharingWindow.setVisible(true);
 				close();
-				
+
 			}
 		});
-		btnZobraziZdieania.setBounds(43, 60, 148, 23);
-		contentPane.add(btnZobraziZdieania);
-		
-		JButton btnMojeZdieania = new JButton("Moje zdie\u013Eania");
-		btnMojeZdieania.addActionListener(new ActionListener() {
+		btnShowSharings.setBounds(43, 60, 148, 23);
+		contentPane.add(btnShowSharings);
+
+		JButton btnMySharings = new JButton(rb.getString("home.mySharings"));
+		btnMySharings.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+
 				SharingsControl.getAllSharingsOfUser();
-				
+
 				Sharings sharingWindow = new MySharings();
 				sharingWindow.setVisible(true);
 				close();
 			}
 		});
-		btnMojeZdieania.setBounds(43, 145, 148, 23);
-		contentPane.add(btnMojeZdieania);
-		
-		JButton btnMojeReakcie = new JButton("Moje reakcie");
-		btnMojeReakcie.addActionListener(new ActionListener() {
+		btnMySharings.setBounds(43, 145, 148, 23);
+		contentPane.add(btnMySharings);
+
+		JButton btnMyReactions = new JButton(rb.getString("home.myReactions"));
+		btnMyReactions.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+
 				ReactionsControl.getReactionsByUser();
 				MyReactions myReactionsWindow = new MyReactions();
 				myReactionsWindow.setVisible(true);
 				close();
 			}
 		});
-		btnMojeReakcie.setBounds(43, 179, 148, 23);
-		contentPane.add(btnMojeReakcie);
-		
-		JButton btnSp = new JButton("Sp\u00E4\u0165");
-		btnSp.setBounds(278, 179, 118, 23);
-		contentPane.add(btnSp);
-		
-	}
-	
-	private String[] getGroupNamesArray()
-	{
-				
-		String[] groupNamesArray = new String[Data.user.getGroups().size()];
-		for (int i = 0; i< Data.user.getGroups().size(); i++)
-		{
-			
-			groupNamesArray[i] = Data.user.getGroups().get(i).getName();
-		}
-		
-		
-		return groupNamesArray;	
-				
+		btnMyReactions.setBounds(43, 179, 148, 23);
+		contentPane.add(btnMyReactions);
+
+		JButton btnBack = new JButton(rb.getString("app.back"));
+		btnBack.setBounds(278, 179, 118, 23);
+		contentPane.add(btnBack);
 	}
 
-	
-	protected void close()
-	{
+	private String[] getGroupNamesArray() {
+
+		String[] groupNamesArray = new String[Data.user.getGroups().size()];
+		for (int i = 0; i < Data.user.getGroups().size(); i++) {
+
+			groupNamesArray[i] = Data.user.getGroups().get(i).getName();
+		}
+
+		return groupNamesArray;
+
+	}
+
+	protected void close() {
 		this.dispose();
 	}
-		
+
 }

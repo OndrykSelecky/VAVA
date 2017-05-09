@@ -33,30 +33,30 @@ public class ManageUser implements ManageUserRemote {
 	
 	public void fillDatabase()
 	{
-		Address a1 = new Address("Konvalinkov·", "8/1", "96212", "Detva", "SK");
-		Address a2 = new Address("StarÈ Grunty", "C2 65/2", "96969", "Bratislava", "SK");
-		Address a3 = new Address("StarÈ Grunty", "C4 21/2", "96969", "Bratislava", "SK");
-		Address a4 = new Address("StarÈ Grunty", "A4 75/2", "96969", "Bratislava", "SK");
-		Address a5 = new Address("StarÈ Grunty", "B3 12/2", "96969", "Bratislava", "SK");
-		Address a6 = new Address("Konvalinkov·", "8/9", "96212", "Detva", "SK");
-		Address a7 = new Address("Konvalinkov·", "7/4", "96212", "Detva", "SK");
-		Address a8 = new Address("Konvalinkov·", "8/2", "96212", "Detva", "SK");
-		Address a9 = new Address("Konvalinkov·", "2/4", "96212", "Detva", "SK");
-		Address a10 = new Address("Konvalinkov·", "2/4", "96212", "Detva", "SK");
+		Address a1 = new Address("Konvalinkov√°", "8/1", "96212", "Detva", "SK");
+		Address a2 = new Address("Star√© Grunty", "C2 65/2", "96969", "Bratislava", "SK");
+		Address a3 = new Address("Star√© Grunty", "C4 21/2", "96969", "Bratislava", "SK");
+		Address a4 = new Address("Star√© Grunty", "A4 75/2", "96969", "Bratislava", "SK");
+		Address a5 = new Address("Star√© Grunty", "B3 12/2", "96969", "Bratislava", "SK");
+		Address a6 = new Address("Konvalinkov√°", "8/9", "96212", "Detva", "SK");
+		Address a7 = new Address("Konvalinkov√°", "7/4", "96212", "Detva", "SK");
+		Address a8 = new Address("Konvalinkov√°", "8/2", "96212", "Detva", "SK");
+		Address a9 = new Address("Konvalinkov√°", "2/4", "96212", "Detva", "SK");
+		Address a10 = new Address("Konvalinkov√°", "2/4", "96212", "Detva", "SK");
 		
-		User u1 = new User("Peter", "Mal˝", "Petulo1","123456", a1, "petko@mail.com", "090912346");		
-		User u2 = new User("Milan", "Hruöka", "Mino45","123456", a2, "minko@mail.com", "0124649464");
-		User u3 =new User("Martin", "Hruöka", "Matomo","123456", a2, "matomo@mail.com", "0000569874");
-		User u4 =new User("Peter", "SlepiËka", "Peso","123456", a3, "peso@mail.com", "0000545674");
-		User u5 =new User("Irvin", "Nov·k", "inko4","123456", a4, "inko@mail.com", "7777555775");
-		User u6 =new User("Azamat", "Horv·th", "aho8","123456", a5, "aho8@mail.com", "0909632157");
+		User u1 = new User("Peter", "Mal√Ω", "Petulo1","123456", a1, "petko@mail.com", "090912346");		
+		User u2 = new User("Milan", "Hru≈°ka", "Mino45","123456", a2, "minko@mail.com", "0124649464");
+		User u3 =new User("Martin", "Hru≈°ka", "Matomo","123456", a2, "matomo@mail.com", "0000569874");
+		User u4 =new User("Peter", "Slepiƒçka", "Peso","123456", a3, "peso@mail.com", "0000545674");
+		User u5 =new User("Irvin", "Nov√°k", "inko4","123456", a4, "inko@mail.com", "7777555775");
+		User u6 =new User("Azamat", "Horv√°th", "aho8","123456", a5, "aho8@mail.com", "0909632157");
 		
 		User u7 =new User("Marek", "Jablko", "maro8","123456", a6, "marek.jablko@mail.com", "090912346");
-		User u8 =new User("Arp·d", "Fulla", "killer7","123456", a7, "arpyf@mail.com", "0124649464");
-		User u9 =new User("Ezekiel", "Dobr˝", "treska","123456", a8, "ezod@mail.com", "7878965321");
-		User u10 =new User("Arnold", "Hluch˝", "dlonra","123456", a10, "arnoh@mail.com", "444465231");
-		User u11 =new User("Jozef", "Hluch˝", "jojo8","123456", a10, "jozko.hluchy@mail.com", "456123895");
-		User u12 =new User("Ondrej", "Slep˝", "onko","123456", a9, "ondryk@mail.com", "0909632157");
+		User u8 =new User("Arp√°d", "Fulla", "killer7","123456", a7, "arpyf@mail.com", "0124649464");
+		User u9 =new User("Ezekiel", "Dobr√Ω", "treska","123456", a8, "ezod@mail.com", "7878965321");
+		User u10 =new User("Arnold", "Hluch√Ω", "dlonra","123456", a10, "arnoh@mail.com", "444465231");
+		User u11 =new User("Jozef", "Hluch√Ω", "jojo8","123456", a10, "jozko.hluchy@mail.com", "456123895");
+		User u12 =new User("Ondrej", "Slep√Ω", "onko","123456", a9, "ondryk@mail.com", "0909632157");
 		
 		addUser(u1);
 		addUser(u2);
@@ -78,7 +78,7 @@ public class ManageUser implements ManageUserRemote {
 		members1.add(u5);
 		members1.add(u6);
 		Set<Sharing> sharing1 = new HashSet<Sharing>();
-		Group g1 = new Group("Mladosù", members1, "Skupina pre intern·t Mladosù v Mlynskej doline", sharing1);
+		Group g1 = new Group("Mlados≈•", members1, "Skupina pre intern√°t Mlados≈• v Mlynskej doline", sharing1);
 		
 		manager.persist(g1);
 		
@@ -93,15 +93,15 @@ public class ManageUser implements ManageUserRemote {
 		members2.add(u4);
 		members2.add(u5);
 		Set<Sharing> sharing2 = new HashSet<Sharing>();
-		Group g2 = new Group("Za kotolÚou", members2, "»erven· a zelen· bytovky za kotolÚou", sharing2);
+		Group g2 = new Group("Za kotol≈àou", members2, "ƒåerven√° a zelen√° bytovky za kotol≈àou", sharing2);
 		
 		manager.persist(g2);	
 		
 		Tag t1 = new Tag("potraviny");
 		Tag t2 = new Tag("ovocie");
 		Tag t3 = new Tag("jedlo");
-		Tag t4 = new Tag("öperky");
-		Tag t5 = new Tag("n·hrdelnÌk");
+		Tag t4 = new Tag("≈°perky");
+		Tag t5 = new Tag("n√°hrdeln√≠k");
 		
 				
 		manager.persist(t1);
@@ -121,14 +121,14 @@ public class ManageUser implements ManageUserRemote {
 		ts2.add(t5);
 		ts2.add(t4);
 		
-		SharingType st1 = new SharingType("Ponuka sluûba");
-		SharingType st2 = new SharingType("Dopyt sluûba");
+		SharingType st1 = new SharingType("Ponuka slu≈æba");
+		SharingType st2 = new SharingType("Dopyt slu≈æba");
 		SharingType st5 = new SharingType("Dopyt tovar");
 		SharingType st3 = new SharingType("Predaj");
-		SharingType st4 = new SharingType("Pren·jom");
-		SharingType st6 = new SharingType("PoûiËanie");
+		SharingType st4 = new SharingType("Pren√°jom");
+		SharingType st6 = new SharingType("Po≈æiƒçanie");
 		SharingType st7 = new SharingType("Strata");
-		SharingType st8 = new SharingType("N·lez");
+		SharingType st8 = new SharingType("N√°lez");
 		SharingType st9 = new SharingType("Darovanie");
 		
 		manager.persist(st1);
@@ -142,29 +142,29 @@ public class ManageUser implements ManageUserRemote {
 		manager.persist(st9);
 		
 		
-		Sharing s1 = new Sharing(st9, u4, ts1, "Jablk·", "Darujem 2 kg jabÂk", "zadarmo", g1, true, false, true);
+		Sharing s1 = new Sharing(st9, u4, ts1, "Jablk√°", "Darujem 2 kg jabƒ∫k", "zadarmo", g1, true, false, true);
 		
 		manager.persist(s1);
 		
-		Sharing s2 = new Sharing(st3, u4, ts1, "Jablk·", "Pred·m 20 kg jabÂk", "0.50Ä/kg", g2, true, true, true);
+		Sharing s2 = new Sharing(st3, u4, ts1, "Jablk√°", "Pred√°m 20 kg jabƒ∫k", "0.50‚Ç¨/kg", g2, true, true, true);
 		manager.persist(s2);
 		
-		Sharing s3 = new Sharing(st8, u12, ts2, "N·hrdelnÌk", "Naöiel som na chodnÌku pred bytovkou zlat˝ n·hrdelnÌk", "", g2, false, false, false);
+		Sharing s3 = new Sharing(st8, u12, ts2, "N√°hrdeln√≠k", "Na≈°iel som na chodn√≠ku pred bytovkou zlat√Ω n√°hrdeln√≠k", "", g2, false, false, false);
 		manager.persist(s3);
 		
-		Reaction r1 = new Reaction(u5, s2, "Dobr˝ deÚ, mal by som z·ujem o 10 kg. MÙûme kedykoævek po 17:00", true, false, false);
+		Reaction r1 = new Reaction(u5, s2, "Dobr√Ω de≈à, mal by som z√°ujem o 10 kg. M√¥≈æme kedykoƒævek po 17:00", true, false, false);
 		
 		manager.persist(r1);		
 		
-		Reaction r2 = new Reaction(u8, s2, "M·mm z·ujem", true, false, false);
+		Reaction r2 = new Reaction(u8, s2, "M√°mm z√°ujem", true, false, false);
 		
 		manager.persist(r2);
 		
-		Reaction r3 = new Reaction(u9, s2, "Chcem vöetky", true, false, true);
+		Reaction r3 = new Reaction(u9, s2, "Chcem v≈°etky", true, false, true);
 		
 		manager.persist(r3);
 		
-		Reaction r4 = new Reaction(u4, s3, "Moja priateæky podobn˝ hæad·, mÙûte ma kontaktovaù?", true, false, true);
+		Reaction r4 = new Reaction(u4, s3, "Moja priateƒæky podobn√Ω hƒæad√°, m√¥≈æte ma kontaktova≈•?", true, false, true);
 		
 		manager.persist(r4);
 		
