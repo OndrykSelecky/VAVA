@@ -37,7 +37,7 @@ public class MySharings extends Sharings {
 
 		setTitle(rb.getString("mysharings.title"));
 
-		JButton btnZobraziReakcie = new JButton(rb.getString("mysharings.title"));
+		JButton btnZobraziReakcie = new JButton(rb.getString("mysharings.showReactions"));
 		btnZobraziReakcie.setBounds(256, 220, 144, 23);
 		getContentPane().add(btnZobraziReakcie);
 

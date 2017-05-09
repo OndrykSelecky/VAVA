@@ -20,6 +20,11 @@ import utils.PropertiesWrapper;
 
 public abstract class TableWindow extends JFrame {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7453114091620212004L;
+
 	private static final String LOCALIZATION = "locale.app";
 
 	protected JPanel contentPane;
@@ -44,17 +49,26 @@ public abstract class TableWindow extends JFrame {
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
-		contentPane.setLayout(null);				
+		contentPane.setLayout(null);
 	}
 	
 	protected void populateTable()	
 	{		
-		model = new DefaultTableModel();
+		model = new DefaultTableModel() {
+
+			private static final long serialVersionUID = -7453114091120212001L;
+
+			@Override
+		    public boolean isCellEditable(int row, int column) {
+		        return false;
+		    }
+		};
+		
 		model.setColumnIdentifiers(columnNames);		
 		table = new JTable();
 		
 		addRows();
-		
+				
 		table.setModel(model);
 		scrollPane = new JScrollPane(table);
 		scrollPane.setBounds(0, 21, 0, 0);
