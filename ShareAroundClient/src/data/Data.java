@@ -22,4 +22,5 @@ public class Data {
 	
 	public static List<Reaction> reactions;
 	
+	public static List<String> tags;
 }

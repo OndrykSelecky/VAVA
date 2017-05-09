@@ -2,6 +2,7 @@ package view.sharings;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Graphics2D;
 import java.awt.Image;
 
 import javax.swing.JFrame;
@@ -23,6 +24,12 @@ import javax.swing.JComboBox;
 import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
 import javax.swing.JTextField;
+import javax.swing.Timer;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.hibernate.annotations.common.util.impl.LoggerFactory;
+
 import javax.imageio.ImageIO;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
@@ -31,8 +38,10 @@ import javax.swing.JCheckBox;
 
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.Base64;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.awt.event.ActionEvent;
@@ -49,6 +58,21 @@ public class AddSharing extends JFrame {
 
 	private JTextField priceField;
 	private JTextField nameField;
+	private JEditorPane dtrpnTagspane;
+	private JProgressBar progressBar;
+
+	private Timer timer = new Timer(100, new ActionListener() {
+
+		private int counter = 1;
+
+		@Override
+		public void actionPerformed(ActionEvent ae) {
+			if (counter > 100) {
+				counter = 1;
+			}
+			progressBar.setValue(++counter);
+		}
+	});
 
 	/**
 	 * Create the frame.
@@ -145,7 +169,7 @@ public class AddSharing extends JFrame {
 		JLabel lblTags = new JLabel(rb.getString("sharing.tags"));
 		panel.add(lblTags, "2, 18, right, default");
 
-		JEditorPane dtrpnTagspane = new JEditorPane();
+		dtrpnTagspane = new JEditorPane();
 		panel.add(dtrpnTagspane, "4, 18");
 
 		JPanel rightPanel = new JPanel();
@@ -162,23 +186,32 @@ public class AddSharing extends JFrame {
 				int returnVal = fc.showDialog(rightPanel, rb.getString("app.choose"));
 
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
+					timer.start();
+
 					File selectedFile = fc.getSelectedFile();
 
 					try {
+						String extension = FilenameUtils.getExtension(selectedFile.getAbsolutePath());
 						BufferedImage myOriginalPicture = ImageIO.read(selectedFile);
 
 						Image previewScaledImage = getScaledImage(myOriginalPicture, lblNewLabel.getWidth(),
 								lblNewLabel.getHeight());
+
+						sendForTagging(myOriginalPicture);
+
 						lblNewLabel.setIcon(new ImageIcon(previewScaledImage));
+
+						timer.stop();
+						progressBar.setValue(100);
 					} catch (IOException e1) {
-						// Logging
+						// TODO Logging
 					}
 				}
 			}
 		});
 		rightPanel.add(openButton, BorderLayout.NORTH);
 
-		JProgressBar progressBar = new JProgressBar();
+		progressBar = new JProgressBar();
 		rightPanel.add(progressBar, BorderLayout.SOUTH);
 
 		addButton.addActionListener(new ActionListener() {
@@ -204,8 +237,8 @@ public class AddSharing extends JFrame {
 	}
 
 	private Image getScaledImage(BufferedImage original, int maxWidth, int maxHeight) {
-		int newWidth = 0;
-		int newHeight = 0;
+		int newWidth = original.getWidth();
+		int newHeight = original.getHeight();
 
 		if (original.getWidth() > maxWidth) {
 			newWidth = maxWidth;
@@ -218,6 +251,37 @@ public class AddSharing extends JFrame {
 		}
 
 		return original.getScaledInstance(newWidth, newHeight, BufferedImage.SCALE_SMOOTH);
+	}
+
+	private BufferedImage createBufferedImage(Image original) {
+		BufferedImage bimage = new BufferedImage(original.getWidth(null), original.getHeight(null),
+				BufferedImage.TYPE_INT_ARGB);
+
+		Graphics2D bGr = bimage.createGraphics();
+		bGr.drawImage(original, 0, 0, null);
+		bGr.dispose();
+
+		return bimage;
+	}
+
+	private void sendForTagging(BufferedImage original) {
+
+		Image uploadScaledImage = getScaledImage(original, 800, 600);
+
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		try {
+			ImageIO.write(createBufferedImage(uploadScaledImage), "jpg", baos);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		byte[] bytes = baos.toByteArray();
+
+		String encoded = Base64.getEncoder().encodeToString(bytes);
+
+		SharingsControl.getTagsOfImage(encoded);
+		dtrpnTagspane.setText(String.join(", ", Data.tags));
+
 	}
 
 }

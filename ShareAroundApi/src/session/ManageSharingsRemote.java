@@ -25,4 +25,6 @@ public interface ManageSharingsRemote {
 	public List<Sharing> getNewSharingsByUserAndType(SharingType sharingType, User user);
 
 	public void addSharing(Sharing sharing);
+	
+	public List<String> getTagsOfImage(String encodedImg);
 }

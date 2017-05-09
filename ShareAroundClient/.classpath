@@ -19,5 +19,6 @@
 	<classpathentry kind="lib" path="lib/required/hibernate-core-5.2.10.Final.jar"/>
 	<classpathentry kind="lib" path="lib/jpa-metamodel-generator/hibernate-jpamodelgen-5.2.10.Final.jar"/>
 	<classpathentry kind="lib" path="lib/jgoodies-common-1.8.0.jar"/>
+	<classpathentry kind="lib" path="lib/commons-io-2.5.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
