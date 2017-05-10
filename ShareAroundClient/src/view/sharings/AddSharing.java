@@ -17,6 +17,7 @@ import com.jgoodies.forms.layout.RowSpec;
 import control.SharingsControl;
 import data.Data;
 import entity.Sharing;
+import entity.Tag;
 import utils.PropertiesWrapper;
 
 import javax.swing.JLabel;
@@ -25,11 +26,7 @@ import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
 import javax.swing.JTextField;
 import javax.swing.Timer;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
-import org.hibernate.annotations.common.util.impl.LoggerFactory;
-
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.imageio.ImageIO;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
@@ -42,31 +39,41 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.Base64;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.awt.event.ActionEvent;
 import javax.swing.JSplitPane;
 
+/**
+ * The add sharing dialog.
+ * 
+ * @author ondryk
+ * @author thecodecook
+ *
+ */
 public class AddSharing extends JFrame {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 263875904749288591L;
-
 	private static final String LOCALIZATION = "locale.app";
+	private static Logger LOG = Logger.getLogger(AddSharing.class.getName());
 
 	private JTextField priceField;
 	private JTextField nameField;
 	private JEditorPane dtrpnTagspane;
 	private JProgressBar progressBar;
 
-	private Timer timer = new Timer(100, new ActionListener() {
+	private Timer timer = new Timer(0, new ActionListener() {
 
 		private int counter = 1;
 
 		@Override
 		public void actionPerformed(ActionEvent ae) {
+			timer.setDelay(100);
 			if (counter > 100) {
 				counter = 1;
 			}
@@ -183,6 +190,8 @@ public class AddSharing extends JFrame {
 		openButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser fc = new JFileChooser();
+				fc.setFileFilter(new FileNameExtensionFilter("Images", "jpg", "png", "bmp"));
+
 				int returnVal = fc.showDialog(rightPanel, rb.getString("app.choose"));
 
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
@@ -191,7 +200,6 @@ public class AddSharing extends JFrame {
 					File selectedFile = fc.getSelectedFile();
 
 					try {
-						String extension = FilenameUtils.getExtension(selectedFile.getAbsolutePath());
 						BufferedImage myOriginalPicture = ImageIO.read(selectedFile);
 
 						Image previewScaledImage = getScaledImage(myOriginalPicture, lblNewLabel.getWidth(),
@@ -203,8 +211,8 @@ public class AddSharing extends JFrame {
 
 						timer.stop();
 						progressBar.setValue(100);
-					} catch (IOException e1) {
-						// TODO Logging
+					} catch (IOException err) {
+						LOG.log(Level.WARNING, "Error opening previously chosen file.", err);
 					}
 				}
 			}
@@ -213,6 +221,12 @@ public class AddSharing extends JFrame {
 
 		progressBar = new JProgressBar();
 		rightPanel.add(progressBar, BorderLayout.SOUTH);
+
+		backButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				close();
+			}
+		});
 
 		addButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -226,7 +240,9 @@ public class AddSharing extends JFrame {
 				sharing.setShowAddress(addressCheckBox.isSelected());
 				sharing.setShowEmail(emailCheckBox.isSelected());
 				sharing.setShowPhone(telephoneCheckBox.isSelected());
+				// sharing.setTags(readTagsFromField());
 				SharingsControl.addNewSharing(sharing);
+
 				close();
 			}
 		});
@@ -236,6 +252,17 @@ public class AddSharing extends JFrame {
 		this.dispose();
 	}
 
+	/**
+	 * Returns scaled image with specified max width and max height
+	 * 
+	 * @param original
+	 *            The original image
+	 * @param maxWidth
+	 *            Max width of the resulting image
+	 * @param maxHeight
+	 *            Max height of the resulting image
+	 * @return Scaled image
+	 */
 	private Image getScaledImage(BufferedImage original, int maxWidth, int maxHeight) {
 		int newWidth = original.getWidth();
 		int newHeight = original.getHeight();
@@ -253,6 +280,13 @@ public class AddSharing extends JFrame {
 		return original.getScaledInstance(newWidth, newHeight, BufferedImage.SCALE_SMOOTH);
 	}
 
+	/**
+	 * Converts {@link Image} into {@link BufferedImage} by redrawing it.
+	 * 
+	 * @param original
+	 *            The original image.
+	 * @return Redrawn image of correct type.
+	 */
 	private BufferedImage createBufferedImage(Image original) {
 		BufferedImage bimage = new BufferedImage(original.getWidth(null), original.getHeight(null),
 				BufferedImage.TYPE_INT_ARGB);
@@ -264,6 +298,12 @@ public class AddSharing extends JFrame {
 		return bimage;
 	}
 
+	/**
+	 * Prepares image to be sent for taggig/labeling.
+	 * 
+	 * @param original
+	 *            Image to be tagged.
+	 */
 	private void sendForTagging(BufferedImage original) {
 
 		Image uploadScaledImage = getScaledImage(original, 800, 600);
@@ -272,8 +312,7 @@ public class AddSharing extends JFrame {
 		try {
 			ImageIO.write(createBufferedImage(uploadScaledImage), "jpg", baos);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOG.log(Level.WARNING, "Error converting image to BASE64.", e);
 		}
 		byte[] bytes = baos.toByteArray();
 
@@ -281,7 +320,24 @@ public class AddSharing extends JFrame {
 
 		SharingsControl.getTagsOfImage(encoded);
 		dtrpnTagspane.setText(String.join(", ", Data.tags));
+	}
 
+	/**
+	 * Reads tags from tag field delimited by comma.
+	 * 
+	 * @return Set containing all specified tags.
+	 */
+	private Set<Tag> readTagsFromField() {
+		if (dtrpnTagspane.getText() == null || dtrpnTagspane.getText() == "") {
+			return Collections.emptySet();
+		}
+
+		String[] parts = dtrpnTagspane.getText().split(",");
+		Set<Tag> tagSet = new HashSet<>();
+		for (int i = 0; i < parts.length; i++) {
+			tagSet.add(new Tag(parts[i].trim()));
+		}
+		return tagSet;
 	}
 
 }

@@ -1,35 +1,27 @@
 package view.sharings;
 
-import java.awt.BorderLayout;
-import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import control.ReactionsControl;
 import control.SharingsControl;
 import data.Data;
-import entity.Reaction;
 import entity.Sharing;
-import session.ManageReactionsRemote;
-import session.ManageSharingsRemote;
 import view.reactions.Reactions;
 
-import javax.naming.NamingException;
 import javax.swing.JButton;
 
 public class MySharings extends Sharings {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -5341799549681717993L;
+
+	private JButton btnShowreactions;
+	private JButton btnAddnew;
 
 	public MySharings() {
 
@@ -37,20 +29,20 @@ public class MySharings extends Sharings {
 
 		setTitle(rb.getString("mysharings.title"));
 
-		JButton btnZobraziReakcie = new JButton(rb.getString("mysharings.showReactions"));
-		btnZobraziReakcie.setBounds(256, 220, 144, 23);
-		getContentPane().add(btnZobraziReakcie);
+		btnShowreactions = new JButton(rb.getString("mysharings.showReactions"));
+		sidePanel.add(btnShowreactions, "1, 6, fill, top");
 
-		JButton btnPridaNov = new JButton(rb.getString("mysharings.addNew"));
-		btnPridaNov.addActionListener(new ActionListener() {
+		btnAddnew = new JButton(rb.getString("mysharings.addNew"));
+		sidePanel.add(btnAddnew, "1, 8");
+
+		btnAddnew.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				AddSharing addSharing = new AddSharing();
 				addSharing.setVisible(true);
 			}
 		});
-		btnPridaNov.setBounds(256, 243, 144, 23);
-		getContentPane().add(btnPridaNov);
-		btnZobraziReakcie.addActionListener(new ActionListener() {
+
+		btnShowreactions.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int index = table.getSelectedRow();
 				if (index < 0) {
@@ -72,17 +64,29 @@ public class MySharings extends Sharings {
 					JOptionPane.showMessageDialog(contentPane, rb.getString("app.warning.notSelected"),
 							rb.getString("app.warning.title"), JOptionPane.WARNING_MESSAGE);
 				} else {
-					JFrame mySharingssWindow = new MySharingDetail(Data.sharings.get(index));
+					JFrame mySharingssWindow = new MySharingDetail(Data.sharings.get(index), MySharings.this);
 					mySharingssWindow.setVisible(true);
 
 				}
 			}
 		});
-
+				
 		columnNames = new String[] { rb.getString("sharing.type"), rb.getString("sharing.label"),
 				rb.getString("sharing.price"), rb.getString("sharing.state"), rb.getString("sharing.group"),
 				rb.getString("sharing.reactions") };
 		populateTable();
+		
+		table.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
+	        public void valueChanged(ListSelectionEvent event) {
+	            updateUI();
+	        }
+	    });
+		
+		updateUI();
+	}
+	
+	public void refreshData() {
+		filter();
 	}
 
 	protected void addRows() {
@@ -106,10 +110,24 @@ public class MySharings extends Sharings {
 	}
 
 	protected void filter() {
-		SharingsControl.getAllSharingsOfUser(Data.sharingTypes.get(comboBox.getSelectedIndex()));
-		MySharings mySharingsWindow = new MySharings();
-		mySharingsWindow.setVisible(true);
-		this.dispose();
+		for (int i = model.getRowCount() - 1; i > -1; i--) {
+			model.removeRow(i);
+		}
+
+		int selectedIndex = comboBox.getSelectedIndex();
+		if (selectedIndex == 0) {
+			SharingsControl.getAllSharingsOfUser();
+		} else {
+			SharingsControl.getAllSharingsOfUser(Data.sharingTypes.get(selectedIndex - 1));
+		}
+
+		addRows();
+		updateUI();
+	}
+
+	protected void updateUI() {
+		btnShowreactions.setEnabled(table.getSelectedRow() >= 0);
+		btnDetail.setEnabled(table.getSelectedRow() >= 0);
 	}
 
 }

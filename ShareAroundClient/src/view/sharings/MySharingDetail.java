@@ -1,176 +1,187 @@
 package view.sharings;
 
 import java.awt.BorderLayout;
-import java.awt.EventQueue;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSplitPane;
 import javax.swing.JTextField;
-import javax.swing.JTextPane;
-import javax.swing.border.EmptyBorder;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
+
+import com.jgoodies.forms.layout.ColumnSpec;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.FormSpecs;
+import com.jgoodies.forms.layout.RowSpec;
 
 import control.SharingsControl;
+import data.Data;
 import entity.Sharing;
+import utils.PropertiesWrapper;
 import view.reactions.AddReaction;
 
 /**
- * Detail môjho zdie¾ania
+ * The view for displaying detail of my sharing.
+ * 
  * @author ondryk
+ * @author thecodecook
  *
  */
 public class MySharingDetail extends JFrame {
 
-	
-	protected JPanel contentPane;
-	protected JTextField textField;
-	protected JTextField textField_1;
-	protected JTextField textField_2;
-	protected JTextField textField_3;
-	protected JLabel lblSkupina;
-	protected JLabel lblTyp;
-	protected JLabel lblPredmet;
-	protected JLabel lblPopis;
-	protected JTextPane textPane;
-	protected JButton btnSp;
-	protected JLabel lblCena;
+	private static final long serialVersionUID = 339700762358955556L;
+	private static final String LOCALIZATION = "locale.app";
 
 	protected Sharing sharing;
-	private JButton btnUkoniZdieanie;
-	private JLabel lblStav;
-	private JTextField textField_4;
-	private JLabel lblDtum;
-	private JTextField textField_5;
-	
-	
-	public MySharingDetail(Sharing sharing) {
-		
-		this.sharing=sharing;
-		
+	private JTextField priceField;
+	private JTextField nameField;
+	private JEditorPane dtrpnTagspane;
+
+	public MySharingDetail(Sharing sharing, MySharings parent) {
+
+		this.sharing = sharing;
+		ResourceBundle rb = ResourceBundle.getBundle(LOCALIZATION,
+				Locale.forLanguageTag(PropertiesWrapper.getProperties().getProperty("locale")));
+
+		setTitle(rb.getString("sharingdetail.title"));
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 566, 291);
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		setContentPane(contentPane);
-		contentPane.setLayout(null);
-		setTitle("Detail zdie¾ania");
-		
-		lblSkupina = new JLabel("Skupina:");
-		lblSkupina.setBounds(26, 31, 73, 14);
-		contentPane.add(lblSkupina);
-		
-		lblTyp = new JLabel("Typ");
-		lblTyp.setBounds(26, 70, 46, 14);
-		contentPane.add(lblTyp);
-		
-		lblPredmet = new JLabel("Predmet");
-		lblPredmet.setBounds(26, 104, 73, 14);
-		contentPane.add(lblPredmet);
-		
-		lblPopis = new JLabel("Popis");
-		lblPopis.setBounds(327, 70, 46, 14);
-		contentPane.add(lblPopis);
-		
-		textPane = new JTextPane();
-		textPane.setBounds(327, 109, 213, 132);
-		contentPane.add(textPane);
-		textPane.setText(sharing.getDescription());
-		
-		textField = new JTextField();
-		textField.setBounds(109, 28, 194, 20);
-		contentPane.add(textField);
-		textField.setColumns(10);
-		textField.setText(sharing.getGroup().getName());
-		
-		textField_1 = new JTextField();
-		textField_1.setBounds(109, 67, 194, 20);
-		contentPane.add(textField_1);
-		textField_1.setColumns(10);
-		textField_1.setText(sharing.getType().getName());
-		
-		textField_2 = new JTextField();
-		textField_2.setBounds(109, 101, 194, 20);
-		contentPane.add(textField_2);
-		textField_2.setColumns(10);
-		textField_2.setText(sharing.getLabel());
-		
-		textField_3 = new JTextField();
-		textField_3.setBounds(109, 135, 194, 20);
-		contentPane.add(textField_3);
-		textField_3.setColumns(10);
-		textField_3.setText(sharing.getPrice());
-		
-		btnSp = new JButton("Sp\u00E4\u0165");
-		btnSp.addActionListener(new ActionListener() {
+		setBounds(100, 100, 700, 400);
+
+		JPanel lowerPanel = new JPanel();
+		getContentPane().add(lowerPanel, BorderLayout.SOUTH);
+
+		JButton backButton = new JButton(rb.getString("app.back"));
+		lowerPanel.add(backButton);
+
+		JButton inactivateButton = new JButton(rb.getString("sharingdetail.inactivate"));
+		lowerPanel.add(inactivateButton);
+
+		JPanel upperPanel = new JPanel();
+		getContentPane().add(upperPanel, BorderLayout.CENTER);
+		upperPanel.setLayout(new BoxLayout(upperPanel, BoxLayout.X_AXIS));
+
+		JSplitPane leftRightPane = new JSplitPane();
+		upperPanel.add(leftRightPane);
+
+		JPanel panel = new JPanel();
+		leftRightPane.setLeftComponent(panel);
+		panel.setMinimumSize(new Dimension(300, 50));
+		panel.setLayout(new FormLayout(
+				new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
+						FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), },
+				new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC,
+						FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+						FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC,
+						RowSpec.decode("default:grow"), FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+						FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC,
+						FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, }));
+
+		JLabel lblType = new JLabel(rb.getString("sharing.type"));
+		panel.add(lblType, "2, 2, right, default");
+
+		JTextField typeValue = new JTextField(sharing.getType().getName());
+		panel.add(typeValue, "4, 2, fill, default");
+		typeValue.setEditable(false);
+
+		JLabel lblName = new JLabel(rb.getString("sharing.label"));
+		panel.add(lblName, "2, 4, right, default");
+
+		nameField = new JTextField(sharing.getLabel());
+		panel.add(nameField, "4, 4, fill, default");
+		nameField.setColumns(10);
+		nameField.setEditable(false);
+
+		JLabel lblGroup = new JLabel(rb.getString("sharing.price"));
+		panel.add(lblGroup, "2, 6, right, default");
+
+		JTextField state = new JTextField(
+				sharing.isActive() ? rb.getString("sharing.state.active") : rb.getString("sharing.state.inactive"));
+		panel.add(state, "4, 8, fill, default");
+		state.setEditable(false);
+
+		JLabel lblPrice = new JLabel(rb.getString("sharing.state"));
+		panel.add(lblPrice, "2, 8, right, default");
+
+		priceField = new JTextField(sharing.getPrice());
+		panel.add(priceField, "4, 6, fill, default");
+		priceField.setColumns(10);
+		priceField.setEditable(false);
+
+		JLabel textLabel = new JLabel(rb.getString("sharing.desc"));
+		panel.add(textLabel, "2, 10, right, default");
+
+		JEditorPane descriptionPane = new JEditorPane();
+		descriptionPane.setText(sharing.getDescription());
+		panel.add(descriptionPane, "4, 10, fill, fill");
+		descriptionPane.setEditable(false);
+
+		JLabel lblPublicData = new JLabel(rb.getString("sharing.shared_data"));
+		panel.add(lblPublicData, "2, 12");
+
+		JCheckBox addressCheckBox = new JCheckBox(rb.getString("user.address"));
+		addressCheckBox.setSelected(sharing.getShowAddress());
+		panel.add(addressCheckBox, "4, 12");
+		addressCheckBox.setEnabled(false);
+
+		JCheckBox emailCheckBox = new JCheckBox(rb.getString("user.email"));
+		panel.add(emailCheckBox, "4, 14");
+		emailCheckBox.setSelected(sharing.getShowEmail());
+		emailCheckBox.setEnabled(false);
+
+		JCheckBox telephoneCheckBox = new JCheckBox(rb.getString("user.telephone"));
+		panel.add(telephoneCheckBox, "4, 16");
+		telephoneCheckBox.setSelected(sharing.getShowPhone());
+		telephoneCheckBox.setEnabled(false);
+
+		JLabel lblTags = new JLabel(rb.getString("sharing.tags"));
+		panel.add(lblTags, "2, 18, right, default");
+
+		dtrpnTagspane = new JEditorPane();
+		panel.add(dtrpnTagspane, "4, 18");
+
+		JPanel rightPanel = new JPanel();
+		leftRightPane.setRightComponent(rightPanel);
+		rightPanel.setLayout(new BorderLayout(0, 0));
+
+		JLabel lblNewLabel = new JLabel();
+		rightPanel.add(lblNewLabel, BorderLayout.CENTER);
+
+		backButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				closeWindow();
 			}
 		});
-		btnSp.setBounds(26, 218, 89, 23);
-		contentPane.add(btnSp);
-		
-		
-		lblCena = new JLabel("Cena");
-		lblCena.setBounds(26, 138, 73, 14);
-		contentPane.add(lblCena);
-		
-		btnUkoniZdieanie = new JButton("Nastavi\u0165 ako neakt\u00EDvne");
-		btnUkoniZdieanie.addActionListener(new ActionListener() {
+
+		inactivateButton.setEnabled(sharing.isActive());
+		inactivateButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+
 				SharingsControl.setInvalid(sharing);
-				btnUkoniZdieanie.setEnabled(false);
+				state.setText(rb.getString("sharing.state.inactive"));
+				inactivateButton.setEnabled(false);
+				
+				parent.refreshData();
 			}
 		});
-		btnUkoniZdieanie.setBounds(125, 218, 178, 23);
-		contentPane.add(btnUkoniZdieanie);
-		
-		lblStav = new JLabel("Stav");
-		lblStav.setBounds(26, 181, 73, 14);
-		contentPane.add(lblStav);
-		
-		textField_4 = new JTextField();
-		textField_4.setBounds(109, 178, 194, 20);
-		contentPane.add(textField_4);
-		textField_4.setColumns(10);
-		
-		lblDtum = new JLabel("D\u00E1tum");
-		lblDtum.setBounds(327, 31, 46, 14);
-		contentPane.add(lblDtum);
-		
-		textField_5 = new JTextField();
-		textField_5.setBounds(395, 28, 145, 20);
-		contentPane.add(textField_5);
-		textField_5.setColumns(10);
-		textField_5.setText(sharing.getDate().toString());
-		if (sharing.isActive() == false)
-		{
-			btnUkoniZdieanie.setEnabled(false);
-			textField_4.setText("neaktívne");
-		}
-		else
-		{
-			textField_4.setText("aktívne");
-		}
-		
-		
-		
+
 	}
 
-	protected void closeWindow()
-	{
+	protected void closeWindow() {
 		this.dispose();
 	}
-	
-	protected void react()
-	{
+
+	protected void react() {
 		JFrame addReactionWindow = new AddReaction(sharing);
 		addReactionWindow.setVisible(true);
 	}
-
 
 }

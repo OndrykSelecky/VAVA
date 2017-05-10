@@ -1,72 +1,126 @@
 package view.reactions;
 
-import java.awt.BorderLayout;
-import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import com.jgoodies.forms.layout.ColumnSpec;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.FormSpecs;
+import com.jgoodies.forms.layout.RowSpec;
+
 import control.ReactionsControl;
 import data.Data;
 import entity.Reaction;
 import entity.Sharing;
-import entity.User;
-import session.ManageReactionsRemote;
-import session.ManageUserRemote;
+import utils.PropertiesWrapper;
+
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JTextPane;
-import javax.naming.NamingException;
 import javax.swing.JButton;
-import javax.swing.JRadioButton;
+import javax.swing.JCheckBox;
 import java.awt.event.ActionListener;
+import java.util.Locale;
+import java.util.ResourceBundle;
 import java.awt.event.ActionEvent;
 
+/**
+ * The view for adding a reaction.
+ * 
+ * @author ondryk
+ * @author thecodecook
+ *
+ */
 public class AddReaction extends JFrame {
 
-	private JPanel contentPane;
-	private JTextPane textPane;
-	private JButton btnOdoslaReakciu;
-	private JRadioButton rdbtnAdresa;
-	private JRadioButton rdbtnTelefnneslo;
-	private JRadioButton rdbtnEmail;
-	private JButton btnSp;
+	private static final long serialVersionUID = -8855959302405873196L;
+	private static final String LOCALIZATION = "locale.app";
+
+	private JCheckBox chckbxAddress;
+	private JCheckBox chckbxTelephone;
+	private JCheckBox chckbxEmail;
+
 	private Sharing sharing;
-	
-	
+
 	/**
 	 * Create the frame.
 	 */
 	public AddReaction(Sharing sharing) {
-		
+		ResourceBundle rb = ResourceBundle.getBundle(LOCALIZATION,
+				Locale.forLanguageTag(PropertiesWrapper.getProperties().getProperty("locale")));
+
 		this.sharing=sharing;
 		
-		setTitle("Pridaù nov˙ reakciu");
+		setTitle(rb.getString("addsharing.title"));
 		
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		setContentPane(contentPane);
-		contentPane.setLayout(null);
+		setBounds(100, 100, 350, 300);
 		
-		JLabel lblSprva = new JLabel("Spr\u00E1va:");
-		lblSprva.setBounds(21, 37, 46, 14);
-		contentPane.add(lblSprva);
 		
-		textPane = new JTextPane();
-		textPane.setBounds(87, 37, 292, 95);
-		contentPane.add(textPane);
+		getContentPane().setLayout(new FormLayout(new ColumnSpec[] {
+				FormSpecs.RELATED_GAP_COLSPEC,
+				FormSpecs.DEFAULT_COLSPEC,
+				FormSpecs.RELATED_GAP_COLSPEC,
+				FormSpecs.DEFAULT_COLSPEC,
+				FormSpecs.RELATED_GAP_COLSPEC,
+				FormSpecs.DEFAULT_COLSPEC,
+				FormSpecs.RELATED_GAP_COLSPEC,
+				FormSpecs.DEFAULT_COLSPEC,
+				FormSpecs.RELATED_GAP_COLSPEC,
+				FormSpecs.DEFAULT_COLSPEC,
+				FormSpecs.RELATED_GAP_COLSPEC,
+				FormSpecs.DEFAULT_COLSPEC,
+				FormSpecs.RELATED_GAP_COLSPEC,
+				ColumnSpec.decode("default:grow"),
+				FormSpecs.RELATED_GAP_COLSPEC,},
+			new RowSpec[] {
+				FormSpecs.RELATED_GAP_ROWSPEC,
+				RowSpec.decode("default:grow"),
+				FormSpecs.RELATED_GAP_ROWSPEC,
+				FormSpecs.DEFAULT_ROWSPEC,
+				FormSpecs.RELATED_GAP_ROWSPEC,
+				FormSpecs.DEFAULT_ROWSPEC,
+				FormSpecs.RELATED_GAP_ROWSPEC,
+				FormSpecs.DEFAULT_ROWSPEC,
+				FormSpecs.RELATED_GAP_ROWSPEC,
+				FormSpecs.DEFAULT_ROWSPEC,
+				FormSpecs.RELATED_GAP_ROWSPEC,
+				FormSpecs.DEFAULT_ROWSPEC,
+				FormSpecs.RELATED_GAP_ROWSPEC,
+				FormSpecs.DEFAULT_ROWSPEC,
+				FormSpecs.RELATED_GAP_ROWSPEC,
+				FormSpecs.DEFAULT_ROWSPEC,
+				FormSpecs.RELATED_GAP_ROWSPEC,}));
 		
-		btnOdoslaReakciu = new JButton("Odosla\u0165 reakciu");
-		btnOdoslaReakciu.addActionListener(new ActionListener() {
+		JLabel message = new JLabel(rb.getString("reaction.message"));
+		getContentPane().add(message, "2, 2, 1, 9");
+		
+		JTextPane textPane = new JTextPane();
+		getContentPane().add(textPane, "4, 2, 5, 10, fill, fill");
+		
+		JLabel lblSharedata = new JLabel(rb.getString("sharing.shared_data"));
+		getContentPane().add(lblSharedata, "2, 14");
+		
+		chckbxAddress = new JCheckBox(rb.getString("user.address"));
+		getContentPane().add(chckbxAddress, "4, 14");
+		
+		chckbxTelephone = new JCheckBox(rb.getString("user.telephone"));
+		getContentPane().add(chckbxTelephone, "6, 14");
+		
+		chckbxEmail = new JCheckBox(rb.getString("user.email"));
+		getContentPane().add(chckbxEmail, "8, 14, left, default");
+		
+		JButton btnSend = new JButton(rb.getString("app.send"));
+		getContentPane().add(btnSend, "6, 16");
+		
+		btnSend.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Reaction reaction = new Reaction();
 				reaction.setMessage(textPane.getText());
-				reaction.setShowAddress(rdbtnAdresa.isSelected());
-				reaction.setShowEmail(rdbtnEmail.isSelected());
-				reaction.setShowPhone(rdbtnTelefnneslo.isSelected());
+				reaction.setShowAddress(chckbxAddress.isSelected());
+				reaction.setShowEmail(chckbxEmail.isSelected());
+				reaction.setShowPhone(chckbxTelephone.isSelected());
 				reaction.setSharing(sharing);
 				reaction.setUser(Data.user);
 				
@@ -75,33 +129,6 @@ public class AddReaction extends JFrame {
 				close();
 			}
 		});
-		btnOdoslaReakciu.setBounds(237, 227, 128, 23);
-		contentPane.add(btnOdoslaReakciu);
-		
-		JLabel lblOdosladaje = new JLabel("Odosla\u0165 \u00FAdaje:");
-		lblOdosladaje.setBounds(21, 172, 85, 14);
-		contentPane.add(lblOdosladaje);
-		
-		rdbtnAdresa = new JRadioButton("Adresa");
-		rdbtnAdresa.setBounds(118, 168, 75, 23);
-		contentPane.add(rdbtnAdresa);
-		
-		rdbtnTelefnneslo = new JRadioButton("Telef\u00F3nne \u010D\u00EDslo");
-		rdbtnTelefnneslo.setBounds(195, 168, 128, 23);
-		contentPane.add(rdbtnTelefnneslo);
-		
-		rdbtnEmail = new JRadioButton("Email");
-		rdbtnEmail.setBounds(325, 168, 89, 23);
-		contentPane.add(rdbtnEmail);
-		
-		btnSp = new JButton("Sp\u00E4\u0165");
-		btnSp.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				close();
-			}
-		});
-		btnSp.setBounds(67, 227, 89, 23);
-		contentPane.add(btnSp);
 	}
 	
 	
