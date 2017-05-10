@@ -6,11 +6,14 @@ import java.util.Set;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+
+import org.jboss.logging.Logger;
 
 import entity.Address;
 import entity.Tag;
@@ -22,15 +25,21 @@ import entity.User;
 
 
 /**
- * Session Bean implementation class ManageUser
+ * Session Bean for manage user queries
+ * @author ondryk
+ * 
  */
 @Stateless
 public class ManageUser implements ManageUserRemote {
 
+	private static final Logger log = Logger.getLogger(ManageUser.class.getName());
+	
 	@PersistenceContext
 	private EntityManager manager; 
 		
-	
+	/**
+	 * method for filling database.
+	 */
 	public void fillDatabase()
 	{
 		Address a1 = new Address("Konvalinková", "8/1", "96212", "Detva", "SK");
@@ -160,6 +169,7 @@ public class ManageUser implements ManageUserRemote {
 		
 		manager.persist(r2);
 		
+		
 		Reaction r3 = new Reaction(u9, s2, "Chcem všetky", true, false, true);
 		
 		manager.persist(r3);
@@ -170,27 +180,56 @@ public class ManageUser implements ManageUserRemote {
 		
 	}
 	
-		
+	/**
+	 * Add new user with address
+	 * @param u added user
+	 */
     private void addUser(User u)
     {    	
-    	manager.persist(u.getAddress());
-    	manager.persist(u);		
+    	try {
+    		manager.persist(u.getAddress());			
+		}
+		catch (Exception e){
+			log.error("persisting address for user " + u.getUserName(), e);
+		}
+    	
+    	try {
+    		manager.persist(u);	
+			log.info("Added user " + u + " (username = " + u.getUserName() + ")");
+		}
+		catch (EntityExistsException e){
+			log.error("Adding user " + u + " (username = " + u.getUserName() + "): already exists in database", e);
+		}
+		catch (Exception e){
+			log.error("Adding user " + u + " (username = " + u.getUserName() + ")", e);
+		}
+    		
     }
 
-    
+  
     public User getByUserName(String userName, String password)
     {
     	
     	User user = null;    	
     	
-       	TypedQuery<User> query = manager.createNamedQuery("entity.user.getByUserName", User.class);
-        query.setParameter("userName", userName);
-        query.setParameter("password", password);
-        List<User>users = query.getResultList();
-    	
+       	TypedQuery<User> query = manager.createNamedQuery("entity.user.getByUserName", User.class);     
+        
+        List<User> users = new ArrayList<User>();
+        try {
+        	query.setParameter("userName", userName);
+            query.setParameter("password", password);
+            users = query.getResultList();
+            
+		}
+		catch (Exception e){
+			log.error("getting user by username " + userName + "" , e);
+		}
+		
+        
         if (users.size() == 1)
         {
         	user = users.get(0);
+        	log.info("Found user " + user + " (username = " + user.getUserName() + ")");
         }        
 
     	return user;
