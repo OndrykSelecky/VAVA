@@ -37,7 +37,7 @@ public class MySharings extends Sharings {
 
 		btnAddnew.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				AddSharing addSharing = new AddSharing();
+				AddSharing addSharing = new AddSharing(MySharings.this);
 				addSharing.setVisible(true);
 			}
 		});

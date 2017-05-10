@@ -3,6 +3,7 @@ package session;
 import javax.ejb.Stateless;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
@@ -19,17 +20,21 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import entity.Group;
 import entity.Sharing;
 import entity.SharingType;
+import entity.Tag;
 import entity.User;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Session Bean implementation class ManageSharings. Manages connection with
  * database for queries about Sharings
  * 
  * @author ondryk
+ * @author thecodecook
  *
  */
 @Stateless
@@ -135,6 +140,28 @@ public class ManageSharings implements ManageSharingsRemote {
 	public void addSharing(Sharing sharing) {
 
 		try {
+			Set<Tag> tags = sharing.getTags();
+			Set<Tag> identifiedTags = new HashSet<>();
+			for (Tag tag : tags) {
+				TypedQuery<Tag> query = manager.createNamedQuery("entity.tag.getByText", Tag.class);
+				query.setParameter("tagText", tag.getText());
+
+				Tag identifiedTag = null;
+				try {
+					identifiedTag = query.getSingleResult();
+				} catch (NoResultException nre) {
+					log.info("Tag " + tag.getText() + "not found. Creating.");
+					identifiedTag = tag;
+					manager.persist(identifiedTag);
+				} finally {
+					if (identifiedTag != null) {
+						identifiedTags.add(identifiedTag);
+					}
+				}
+			}
+
+			sharing.setTags(identifiedTags);
+
 			manager.persist(sharing);
 			log.info("Added sharing " + sharing + " (user.id = " + sharing.getUser().getId() + ", username = "
 					+ sharing.getUser().getUserName() + ")");
@@ -182,7 +209,7 @@ public class ManageSharings implements ManageSharingsRemote {
 				tags.add(tagArray.getJSONObject(i).getString("description"));
 			}
 
-			log.info(tags.size() + " tags found for image");
+			log.debug(tags.size() + " tags found for image");
 
 			return tags;
 		} catch (UnirestException e) {

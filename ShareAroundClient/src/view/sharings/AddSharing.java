@@ -85,7 +85,7 @@ public class AddSharing extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public AddSharing() {
+	public AddSharing(MySharings mySharingsParent) {
 		ResourceBundle rb = ResourceBundle.getBundle(LOCALIZATION,
 				Locale.forLanguageTag(PropertiesWrapper.getProperties().getProperty("locale")));
 
@@ -241,7 +241,7 @@ public class AddSharing extends JFrame {
 				sharing.setShowAddress(addressCheckBox.isSelected());
 				sharing.setShowEmail(emailCheckBox.isSelected());
 				sharing.setShowPhone(telephoneCheckBox.isSelected());
-				// sharing.setTags(readTagsFromField());
+				sharing.setTags(readTagsFromField());
 
 				if (encodedImage != null) {
 					sharing.setEncodedImage(encodedImage);
@@ -249,6 +249,7 @@ public class AddSharing extends JFrame {
 
 				SharingsControl.addNewSharing(sharing);
 
+				mySharingsParent.refreshData();
 				close();
 			}
 		});

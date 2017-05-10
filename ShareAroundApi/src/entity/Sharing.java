@@ -33,9 +33,9 @@ import entity.Tag;
 				+ "where :group in s.group AND s.active = true order by s.id DESC"),
 		@NamedQuery(name = "entity.sharing.getNewSharingsByType", query = "select s from Sharing as s "
 				+ " where :group in s.group AND s.active = true AND s.type = :type order by s.date DESC"),
-		@NamedQuery(name = "entity.sharing.getMySharings", query = "select distinct s from Sharing as s LEFT JOIN FETCH s.reactions "
+		@NamedQuery(name = "entity.sharing.getMySharings", query = "select distinct s from Sharing as s LEFT JOIN FETCH s.reactions LEFT JOIN FETCH s.tags "
 				+ " where s.user = :user order by s.date DESC"),
-		@NamedQuery(name = "entity.sharing.getMySharingsByType", query = "select distinct s from Sharing as s LEFT JOIN FETCH s.reactions "
+		@NamedQuery(name = "entity.sharing.getMySharingsByType", query = "select distinct s from Sharing as s LEFT JOIN FETCH s.reactions LEFT JOIN FETCH s.tags "
 				+ " where s.user = :user AND s.active = true AND s.type = :type order by s.date DESC"),
 		@NamedQuery(name = "entity.sharing.setInvalid", query = "update Sharing set active = false WHERE id = :id"), })
 public class Sharing implements Serializable {

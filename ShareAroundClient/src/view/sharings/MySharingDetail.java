@@ -32,6 +32,7 @@ import com.jgoodies.forms.layout.RowSpec;
 
 import control.SharingsControl;
 import entity.Sharing;
+import entity.Tag;
 import utils.ImageUtils;
 import utils.PropertiesWrapper;
 import view.reactions.AddReaction;
@@ -156,6 +157,14 @@ public class MySharingDetail extends JFrame {
 
 		dtrpnTagspane = new JEditorPane();
 		panel.add(dtrpnTagspane, "4, 18");
+		dtrpnTagspane.setEditable(false);
+
+		StringBuffer sb = new StringBuffer();
+		String[] arrTagNames = new String[sb.length()];
+		for (Tag tag : sharing.getTags()) {
+			sb.append(tag.getText()).append(", ");
+		}
+		dtrpnTagspane.setText(sb.delete(sb.length() - 2, sb.length()).toString());
 
 		JLabel lblNewLabel = new JLabel();
 		leftRightPane.setRightComponent(lblNewLabel);
