@@ -10,6 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
@@ -19,102 +20,97 @@ import javax.persistence.Table;
 
 import entity.Tag;
 
+/**
+ * The main entity of out app.
+ * 
+ * @author ondryk
+ *
+ */
 @Entity
-@Table(name="sharing")
+@Table(name = "sharing")
 @NamedQueries({
-@NamedQuery(name="entity.sharing.getNewSharings", query = "select s from Sharing as s "
-		+ "where :group in s.group AND s.active = true order by s.id DESC"),
-@NamedQuery(name="entity.sharing.getNewSharingsByType", query = "select s from Sharing as s "
-		+ " where :group in s.group AND s.active = true AND s.type = :type order by s.date DESC"),
-@NamedQuery(name="entity.sharing.getMySharings", query = "select distinct s from Sharing as s LEFT JOIN FETCH s.reactions "
-		+ " where s.user = :user order by s.date DESC"),
-@NamedQuery(name="entity.sharing.getMySharingsByType", query = "select distinct s from Sharing as s LEFT JOIN FETCH s.reactions "
-		+ " where s.user = :user AND s.active = true AND s.type = :type order by s.date DESC"),
-@NamedQuery(name="entity.sharing.setInvalid", query="update Sharing set active = false WHERE id = :id"),
-})
-public class Sharing implements Serializable{
+		@NamedQuery(name = "entity.sharing.getNewSharings", query = "select s from Sharing as s "
+				+ "where :group in s.group AND s.active = true order by s.id DESC"),
+		@NamedQuery(name = "entity.sharing.getNewSharingsByType", query = "select s from Sharing as s "
+				+ " where :group in s.group AND s.active = true AND s.type = :type order by s.date DESC"),
+		@NamedQuery(name = "entity.sharing.getMySharings", query = "select distinct s from Sharing as s LEFT JOIN FETCH s.reactions "
+				+ " where s.user = :user order by s.date DESC"),
+		@NamedQuery(name = "entity.sharing.getMySharingsByType", query = "select distinct s from Sharing as s LEFT JOIN FETCH s.reactions "
+				+ " where s.user = :user AND s.active = true AND s.type = :type order by s.date DESC"),
+		@NamedQuery(name = "entity.sharing.setInvalid", query = "update Sharing set active = false WHERE id = :id"), })
+public class Sharing implements Serializable {
 
-	
 	private static final long serialVersionUID = -1012513616484821058L;
-	
-	
+
 	@Id
-	@GeneratedValue( strategy= GenerationType.AUTO )
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
-	
-	
+
 	/**
-	 * Typ zdieæania. KaûdÈ m· jeden typ.
+	 * The type of sharing. Every sharing has a type.
 	 */
 	@ManyToOne
 	private SharingType type;
-	
-	
+
 	/**
-	 * UûÌvateæ, ktor˝ danÈ zdieæanie vytvoril
+	 * The user who created this sharing.
 	 */
 	@ManyToOne
 	private User user;
-	
-	
-	//Zatiaæ neimplementovanÈ, jednalo by sa o filtrovanie podæa tagov.
+
+	// TODO filtering with tags
 	@ManyToMany
 	private Set<Tag> tags;
-	
-	
+
 	/**
-	 * Nadpis
+	 * Title of sharing
 	 */
 	private String label;
-	
-	
+
 	/**
-	 * Popis
+	 * Description of sharing
 	 */
 	private String description;
-	
+
 	/**
-	 * Platnosù - Ëi je novÈ, alebo uû bolo zdieæanie ukonËenÈ.
+	 * Specifies whether this sharing is active or inactive
 	 */
 	private Boolean active;
-	
+
 	private Date date;
-	
-	
+
 	/**
-	 * Cena, ak nejak· je. 	
+	 * Price if applies.
 	 */
 	private String price;
-	
-	
+
 	/**
-	 * Skupina, vr·mci ktorej sa zobrazÌ
+	 * The group which can see this sharing.
 	 */
 	@ManyToOne
 	private Group group;
-	
-	
+
 	/**
-	 * Zoznam reakciÌ na zdieæanie.
+	 * List of reactions to this sharing.
 	 */
-	@OneToMany(mappedBy="sharing")
+	@OneToMany(mappedBy = "sharing")
 	private List<Reaction> reactions;
-	
-	
+
 	private Boolean showAddress;
-	
+
 	private Boolean showEmail;
-	
+
 	private Boolean showPhone;
 
-	
-	public Sharing(){
-		
+	@Lob
+	private String encodedImage;
+
+	public Sharing() {
+
 		this.date = new Date(Calendar.getInstance().getTimeInMillis());
 		this.active = true;
 	};
-		
-	
+
 	public Sharing(SharingType type, User user, Set<Tag> tags, String label, String description, String price,
 			Group group, Boolean showAddress, Boolean showEmail, Boolean showPhone) {
 		super();
@@ -128,11 +124,9 @@ public class Sharing implements Serializable{
 		this.showAddress = showAddress;
 		this.showEmail = showEmail;
 		this.showPhone = showPhone;
-		this.label=label;
+		this.label = label;
 		this.date = new Date(Calendar.getInstance().getTimeInMillis());
 	}
-	
-	
 
 	public long getId() {
 		return id;
@@ -158,7 +152,6 @@ public class Sharing implements Serializable{
 		this.user = user;
 	}
 
-	
 	public String getDescription() {
 		return description;
 	}
@@ -199,67 +192,60 @@ public class Sharing implements Serializable{
 		this.reactions = reactions;
 	}
 
-
 	public Set<Tag> getTags() {
 		return tags;
 	}
-
 
 	public void setTags(Set<Tag> tags) {
 		this.tags = tags;
 	}
 
-
 	public Boolean getShowAddress() {
 		return showAddress;
 	}
-
 
 	public void setShowAddress(Boolean showAddress) {
 		this.showAddress = showAddress;
 	}
 
-
 	public Boolean getShowEmail() {
 		return showEmail;
 	}
-
 
 	public void setShowEmail(Boolean showEmail) {
 		this.showEmail = showEmail;
 	}
 
-
 	public Boolean getShowPhone() {
 		return showPhone;
 	}
-
 
 	public void setShowPhone(Boolean showPhone) {
 		this.showPhone = showPhone;
 	}
 
-
 	public String getLabel() {
 		return label;
 	}
-
 
 	public void setLabel(String label) {
 		this.label = label;
 	}
 
-
 	public Date getDate() {
 		return date;
 	}
-
 
 	public void setDate(Date date) {
 		this.date = date;
 	}
 
+	public String getEncodedImage() {
+		return encodedImage;
+	}
 
-		
-	
+	public void setEncodedImage(String encodedImage) {
+		this.encodedImage = encodedImage;
+	}
+
 }

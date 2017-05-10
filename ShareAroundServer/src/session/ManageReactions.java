@@ -17,7 +17,8 @@ import entity.User;
 
 /**
  * Session bean for managing reactions
- * @author ondryk *
+ * 
+ * @author ondryk
  */
 @Stateless
 public class ManageReactions implements ManageReactionsRemote {
@@ -26,59 +27,52 @@ public class ManageReactions implements ManageReactionsRemote {
 
 	@PersistenceContext
 	private EntityManager manager;
-	
-	public void addReaction(Reaction reaction)
-	{
+
+	public void addReaction(Reaction reaction) {
 		try {
 			manager.persist(reaction);
-			log.info("Added reaction " + reaction + " (user.id = " + reaction.getUser().getId() + ") on sharing " + reaction.getSharing() + 
-					" (id = " + reaction.getSharing().getId() + ")");
+			log.info("Added reaction " + reaction + " (user.id = " + reaction.getUser().getId() + ") on sharing "
+					+ reaction.getSharing() + " (id = " + reaction.getSharing().getId() + ")");
+		} catch (EntityExistsException e) {
+			log.error("Adding reaction " + reaction + " (user.id = " + reaction.getUser().getId() + ") on sharing "
+					+ reaction.getSharing() + " (id = " + reaction.getSharing().getId()
+					+ "): already exists in database", e);
+		} catch (Exception e) {
+			log.error("Adding reaction " + reaction + " (user.id = " + reaction.getUser().getId() + ") on sharing "
+					+ reaction.getSharing() + " (id = " + reaction.getSharing().getId() + ")", e);
 		}
-		catch (EntityExistsException e){
-			log.error("Adding reaction " + reaction + " (user.id = " + reaction.getUser().getId() + ") on sharing " + reaction.getSharing() + 
-					" (id = " + reaction.getSharing().getId() + "): already exists in database", e);
-		}
-		catch (Exception e){
-			log.error("Adding reaction " + reaction + " (user.id = " + reaction.getUser().getId() + ") on sharing " + reaction.getSharing() + 
-					" (id = " + reaction.getSharing().getId() + ")", e);
-		}
-		
+
 	}
-	
-	public List<Reaction> getReactionsBySharing(Sharing sharing)
-	{
+
+	public List<Reaction> getReactionsBySharing(Sharing sharing) {
 		TypedQuery<Reaction> query = manager.createNamedQuery("entity.Reaction.getReactionsBySharing", Reaction.class);
-		
+
 		List<Reaction> result = new ArrayList<Reaction>();
-		
+
 		try {
 			query.setParameter("sharing", sharing);
 			result = query.getResultList();
-			log.info( result.size() + " reactions found for sharing " + sharing + " (id = " + sharing.getId() + ")");
+			log.info(result.size() + " reactions found for sharing " + sharing + " (id = " + sharing.getId() + ")");
+		} catch (Exception e) {
+			log.error("getting reactions for sharing " + sharing + " (id = " + sharing.getId() + ")", e);
 		}
-		catch (Exception e){
-			log.error("getting reactions for sharing " + sharing + " (id = " + sharing.getId() + ")" , e);
-		}
-		
+
 		return result;
 	}
-	
-	public List<Reaction> getReactionsByUser(User user)
-	{
+
+	public List<Reaction> getReactionsByUser(User user) {
 		List<Reaction> result = new ArrayList<Reaction>();
-		
+
 		TypedQuery<Reaction> query = manager.createNamedQuery("entity.Reaction.getReactionsByUser", Reaction.class);
-		try{
+		try {
 			query.setParameter("user", user);
 			result = query.getResultList();
-			log.info( result.size() + " reactions found for user " + user + " (id = " + user.getId() + ")");
+			log.info(result.size() + " reactions found for user " + user + " (id = " + user.getId() + ")");
+		} catch (Exception e) {
+			log.error("getting reactions for user " + user + " (id = " + user.getId() + ")", e);
 		}
-		catch (Exception e){
-			log.error("getting reactions for user " + user + " (id = " + user.getId() + ")" , e);
-		}
-		
+
 		return result;
 	}
-	
 
 }

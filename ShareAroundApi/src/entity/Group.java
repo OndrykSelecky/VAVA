@@ -13,41 +13,38 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-
 /**
- * Skupina s názvom, napríklad jeden panelák alebo internát.
+ * Group with a name, it can be a dormitory or workplace
  * 
  * @author ondryk
  *
  */
 @Entity
-@Table(name="group1")
+@Table(name = "group1")
 public class Group implements Serializable {
 
-	
 	private static final long serialVersionUID = -3645128872768555986L;
-	
+
 	@Id
-	@GeneratedValue( strategy= GenerationType.AUTO )
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
-	
-	@Column(nullable=false)
+
+	@Column(nullable = false)
 	private String name;
-	
+
 	/**
-	 * Èlenovia - užívatelia
+	 * Members - users
 	 */
 	@ManyToMany
 	private List<User> members;
-		
+
 	private String description;
-	
+
 	/**
-	 * Pre každé zdie¾anie sa eviduje, v rámci ktorej skupiny bolo vytvorené
+	 * Every sharing belongs to a specific group
 	 */
-	@OneToMany(mappedBy="group")
+	@OneToMany(mappedBy = "group")
 	private Set<Sharing> sharings;
-	
 
 	public Group(String name, List<User> members, String description, Set<Sharing> sharings) {
 		super();
@@ -57,9 +54,9 @@ public class Group implements Serializable {
 		this.sharings = sharings;
 	}
 
-	public Group(){};
-	
-	
+	public Group() {
+	};
+
 	public long getId() {
 		return id;
 	}
@@ -99,7 +96,5 @@ public class Group implements Serializable {
 	public void setSharings(Set<Sharing> sharings) {
 		this.sharings = sharings;
 	}
-
-	
 
 }

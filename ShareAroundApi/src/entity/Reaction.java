@@ -15,70 +15,63 @@ import javax.persistence.Table;
 
 import entity.Sharing;
 
-
 /**
- * Reakcia uûÌvateæa na zdieæanie.
+ * Reaction of user to sharing
+ * 
  * @author ondryk
  *
  */
 @Entity
-@Table(name="reaction")
+@Table(name = "reaction")
 @NamedQueries({
-@NamedQuery(name="entity.Reaction.getReactionsBySharing", query = "select r from Reaction r where :sharing = r.sharing order by r.date DESC"),
-@NamedQuery(name="entity.Reaction.getReactionsByUser", query = "select r from Reaction r where :user = r.user order by r.date DESC"),
-})
+		@NamedQuery(name = "entity.Reaction.getReactionsBySharing", query = "select r from Reaction r where :sharing = r.sharing order by r.date DESC"),
+		@NamedQuery(name = "entity.Reaction.getReactionsByUser", query = "select r from Reaction r where :user = r.user order by r.date DESC"), })
 public class Reaction implements Serializable {
 
-	
 	private static final long serialVersionUID = -4356655808936398008L;
-	
+
 	@Id
-	@GeneratedValue( strategy= GenerationType.AUTO )
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
-	
+
 	/**
-	 * UûÌvateæ, ktor˝ reakciu vytvoril
+	 * The creator of this reaction.
 	 */
-	@ManyToOne		
+	@ManyToOne
 	private User user;
-	
-	
+
 	/**
-	 * Zdieæanie, na ktorÈ reaguje.
+	 * The sharing the user is reponding to.
 	 */
 	@ManyToOne
 	private Sharing sharing;
-	
+
 	/**
-	 * Text spr·vy
+	 * The message content.
 	 */
 	private String message;
-	
-	
+
 	/**
-	 * Reaguj˙ci urËÌ, ktorÈ kontaktnÈ ˙daje sa zobrazia autorovi zdieæania
+	 * Specifies which data will be shown to other users.
 	 */
 	private Boolean showAddress;
-	
+
 	private Boolean showEmail;
-	
+
 	private Boolean showPhone;
-	
-	
-	//zatiaæ neimplementovan· funkcionalita, malo sl˙ûiù na urËenie, Ëi uû autor zdieæania videl reakciu
+
+	// TODO not implemented yet, has the owner of sharing seen this reaction?
 	private Boolean isNew;
-	
+
 	private Date date;
-	
-	public Reaction()
-	{
+
+	public Reaction() {
 		this.date = new Date(Calendar.getInstance().getTimeInMillis());
-		this.isNew = true;		
+		this.isNew = true;
 	};
 
 	public Reaction(User user, Sharing sharing, String message, Boolean showAddress, Boolean showEmail,
-			Boolean showPhone) 
-	{
+			Boolean showPhone) {
 		super();
 		this.user = user;
 		this.sharing = sharing;
@@ -161,10 +154,5 @@ public class Reaction implements Serializable {
 	public void setDate(Date date) {
 		this.date = date;
 	}
-
-		
-	
-	
-	
 
 }

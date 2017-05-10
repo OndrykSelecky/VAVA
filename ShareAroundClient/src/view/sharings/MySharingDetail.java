@@ -2,15 +2,22 @@ package view.sharings;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+import javax.imageio.ImageIO;
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -24,8 +31,8 @@ import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
 
 import control.SharingsControl;
-import data.Data;
 import entity.Sharing;
+import utils.ImageUtils;
 import utils.PropertiesWrapper;
 import view.reactions.AddReaction;
 
@@ -40,6 +47,7 @@ public class MySharingDetail extends JFrame {
 
 	private static final long serialVersionUID = 339700762358955556L;
 	private static final String LOCALIZATION = "locale.app";
+	private static Logger LOG = Logger.getLogger(MySharingDetail.class.getName());
 
 	protected Sharing sharing;
 	private JTextField priceField;
@@ -49,6 +57,7 @@ public class MySharingDetail extends JFrame {
 	public MySharingDetail(Sharing sharing, MySharings parent) {
 
 		this.sharing = sharing;
+
 		ResourceBundle rb = ResourceBundle.getBundle(LOCALIZATION,
 				Locale.forLanguageTag(PropertiesWrapper.getProperties().getProperty("locale")));
 
@@ -148,12 +157,20 @@ public class MySharingDetail extends JFrame {
 		dtrpnTagspane = new JEditorPane();
 		panel.add(dtrpnTagspane, "4, 18");
 
-		JPanel rightPanel = new JPanel();
-		leftRightPane.setRightComponent(rightPanel);
-		rightPanel.setLayout(new BorderLayout(0, 0));
-
 		JLabel lblNewLabel = new JLabel();
-		rightPanel.add(lblNewLabel, BorderLayout.CENTER);
+		leftRightPane.setRightComponent(lblNewLabel);
+
+		String encodedImage = sharing.getEncodedImage();
+		if (encodedImage != null) {
+			try {
+
+				Image previewScaledImage = ImageUtils.getScaledImage(decodeImage(encodedImage), 320, 320);
+				lblNewLabel.setIcon(new ImageIcon(previewScaledImage));
+
+			} catch (IOException err) {
+				LOG.log(Level.WARNING, "Image conversion failed from BASE64.", err);
+			}
+		}
 
 		backButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -168,7 +185,7 @@ public class MySharingDetail extends JFrame {
 				SharingsControl.setInvalid(sharing);
 				state.setText(rb.getString("sharing.state.inactive"));
 				inactivateButton.setEnabled(false);
-				
+
 				parent.refreshData();
 			}
 		});
@@ -182,6 +199,11 @@ public class MySharingDetail extends JFrame {
 	protected void react() {
 		JFrame addReactionWindow = new AddReaction(sharing);
 		addReactionWindow.setVisible(true);
+	}
+
+	private BufferedImage decodeImage(String base64Encoded) throws IOException {
+		byte[] imageBytes = javax.xml.bind.DatatypeConverter.parseBase64Binary(base64Encoded);
+		return ImageIO.read(new ByteArrayInputStream(imageBytes));
 	}
 
 }

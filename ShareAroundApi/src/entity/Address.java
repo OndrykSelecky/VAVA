@@ -10,44 +10,38 @@ import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-
 /**
- * Reprezentácie adresy. Každý užívate¾ má vlastnú adresu.
+ * Address representation, every user has an address
+ * 
  * @author ondryk
  *
  */
 @Entity
-@Table(name="address")
-public class Address implements Serializable{
+@Table(name = "address")
+public class Address implements Serializable {
 
-	
 	private static final long serialVersionUID = 7564776194312963061L;
-	
-	
-	@Id
-	@GeneratedValue( strategy= GenerationType.AUTO )	
-	private long id;
-	
-	
-    private String houseNumber;
-     
-    
-    private String streetAddress;
-     
-    @Column( nullable = false)
-    private String city;
-     
-    @Column( nullable = false)
-    private String state;
-     
-    @Column(nullable = false)
-    private String zipCode;
-    
-    @OneToOne(mappedBy="address")
-    private User user;
 
-        
-    
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private long id;
+
+	private String houseNumber;
+
+	private String streetAddress;
+
+	@Column(nullable = false)
+	private String city;
+
+	@Column(nullable = false)
+	private String state;
+
+	@Column(nullable = false)
+	private String zipCode;
+
+	@OneToOne(mappedBy = "address")
+	private User user;
+
 	public long getId() {
 		return id;
 	}
@@ -104,7 +98,7 @@ public class Address implements Serializable{
 		this.user = user;
 	}
 
-	public Address(String streetAddress, String houseNumber, String zipCode, String city, String state ) {
+	public Address(String streetAddress, String houseNumber, String zipCode, String city, String state) {
 		super();
 		this.houseNumber = houseNumber;
 		this.streetAddress = streetAddress;
@@ -113,7 +107,7 @@ public class Address implements Serializable{
 		this.zipCode = zipCode;
 	}
 
-	
-	public Address(){};
-	
+	public Address() {
+	};
+
 }

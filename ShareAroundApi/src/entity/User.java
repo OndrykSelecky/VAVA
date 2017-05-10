@@ -2,9 +2,7 @@ package entity;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -18,68 +16,65 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-
 /**
- * Užívate¾ v systéme. 
+ * The user entity. It belong to a group and can have many shares.
+ * 
  * @author ondryk
  *
  */
 @Entity
-@Table(name="user1")
-@NamedQuery(name="entity.user.getByUserName", query = "select u from User u where u.userName = :userName and u.password = :password")
-public class User implements Serializable{
+@Table(name = "user1")
+@NamedQuery(name = "entity.user.getByUserName", query = "select u from User u where u.userName = :userName and u.password = :password")
+public class User implements Serializable {
 
-	
 	private static final long serialVersionUID = -3363120264501521428L;
-	
-	
+
 	@Id
-	@GeneratedValue( strategy= GenerationType.AUTO )	
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
-		
-	private String firstName;	
-	
+
+	private String firstName;
+
 	private String lastName;
-	
-	@Column(nullable=false)
+
+	@Column(nullable = false)
 	private String userName;
-	
-	@Column(nullable=false)
+
+	@Column(nullable = false)
 	private String password;
-				
+
 	/**
-	 * Skupiny, ktorých je èlenom
+	 * Groups this user belongs to.
 	 */
-	@ManyToMany(fetch=FetchType.EAGER, mappedBy="members")
+	@ManyToMany(fetch = FetchType.EAGER, mappedBy = "members")
 	private List<Group> groups;
-	
+
 	/**
-	 * Kontaktné údaje
+	 * Contact information
 	 */
 	@OneToOne
-	@JoinColumn(name="addressId") 
+	@JoinColumn(name = "addressId")
 	private Address address;
-	
+
 	private String email;
-	
+
 	private String phone;
-	
+
 	/**
-	 * Zoznam zdie¾aní, ktoré vytvoril
+	 * The list of sharings of this user.
 	 */
-	@OneToMany(mappedBy="user")
+	@OneToMany(mappedBy = "user")
 	private List<Sharing> sharings;
-	
-	
+
 	/**
-	 * Zoznam reakcií, ktorých je autorom
+	 * The reactions of this users.
 	 */
-	@OneToMany(mappedBy="user")
+	@OneToMany(mappedBy = "user")
 	private List<Reaction> reactions;
 
-	
-	public User(){};
-	
+	public User() {
+	};
+
 	public User(String firstName, String lastName, String userName, String password, Address address, String email,
 			String phone) {
 		super();
@@ -91,7 +86,7 @@ public class User implements Serializable{
 		this.email = email;
 		this.phone = phone;
 	}
-	
+
 	public long getId() {
 		return id;
 	}
@@ -180,9 +175,4 @@ public class User implements Serializable{
 		this.reactions = reactions;
 	}
 
-	
-	
-	
-	
-	
 }

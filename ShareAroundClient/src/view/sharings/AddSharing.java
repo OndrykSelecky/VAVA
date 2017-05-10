@@ -2,7 +2,6 @@ package view.sharings;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.Graphics2D;
 import java.awt.Image;
 
 import javax.swing.JFrame;
@@ -18,6 +17,7 @@ import control.SharingsControl;
 import data.Data;
 import entity.Sharing;
 import entity.Tag;
+import utils.ImageUtils;
 import utils.PropertiesWrapper;
 
 import javax.swing.JLabel;
@@ -66,6 +66,7 @@ public class AddSharing extends JFrame {
 	private JTextField nameField;
 	private JEditorPane dtrpnTagspane;
 	private JProgressBar progressBar;
+	private String encodedImage = null;
 
 	private Timer timer = new Timer(0, new ActionListener() {
 
@@ -202,7 +203,7 @@ public class AddSharing extends JFrame {
 					try {
 						BufferedImage myOriginalPicture = ImageIO.read(selectedFile);
 
-						Image previewScaledImage = getScaledImage(myOriginalPicture, lblNewLabel.getWidth(),
+						Image previewScaledImage = ImageUtils.getScaledImage(myOriginalPicture, lblNewLabel.getWidth(),
 								lblNewLabel.getHeight());
 
 						sendForTagging(myOriginalPicture);
@@ -241,6 +242,11 @@ public class AddSharing extends JFrame {
 				sharing.setShowEmail(emailCheckBox.isSelected());
 				sharing.setShowPhone(telephoneCheckBox.isSelected());
 				// sharing.setTags(readTagsFromField());
+
+				if (encodedImage != null) {
+					sharing.setEncodedImage(encodedImage);
+				}
+
 				SharingsControl.addNewSharing(sharing);
 
 				close();
@@ -252,51 +258,6 @@ public class AddSharing extends JFrame {
 		this.dispose();
 	}
 
-	/**
-	 * Returns scaled image with specified max width and max height
-	 * 
-	 * @param original
-	 *            The original image
-	 * @param maxWidth
-	 *            Max width of the resulting image
-	 * @param maxHeight
-	 *            Max height of the resulting image
-	 * @return Scaled image
-	 */
-	private Image getScaledImage(BufferedImage original, int maxWidth, int maxHeight) {
-		int newWidth = original.getWidth();
-		int newHeight = original.getHeight();
-
-		if (original.getWidth() > maxWidth) {
-			newWidth = maxWidth;
-			newHeight = (newWidth * original.getHeight()) / original.getWidth();
-		}
-
-		if (newHeight > maxHeight) {
-			newHeight = maxHeight;
-			newWidth = (newHeight * original.getWidth()) / original.getHeight();
-		}
-
-		return original.getScaledInstance(newWidth, newHeight, BufferedImage.SCALE_SMOOTH);
-	}
-
-	/**
-	 * Converts {@link Image} into {@link BufferedImage} by redrawing it.
-	 * 
-	 * @param original
-	 *            The original image.
-	 * @return Redrawn image of correct type.
-	 */
-	private BufferedImage createBufferedImage(Image original) {
-		BufferedImage bimage = new BufferedImage(original.getWidth(null), original.getHeight(null),
-				BufferedImage.TYPE_INT_ARGB);
-
-		Graphics2D bGr = bimage.createGraphics();
-		bGr.drawImage(original, 0, 0, null);
-		bGr.dispose();
-
-		return bimage;
-	}
 
 	/**
 	 * Prepares image to be sent for taggig/labeling.
@@ -306,19 +267,19 @@ public class AddSharing extends JFrame {
 	 */
 	private void sendForTagging(BufferedImage original) {
 
-		Image uploadScaledImage = getScaledImage(original, 800, 600);
+		Image uploadScaledImage = ImageUtils.getScaledImage(original, 800, 600);
 
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		try {
-			ImageIO.write(createBufferedImage(uploadScaledImage), "jpg", baos);
+			ImageIO.write(ImageUtils.createBufferedImage(uploadScaledImage), "jpg", baos);
 		} catch (IOException e) {
 			LOG.log(Level.WARNING, "Error converting image to BASE64.", e);
 		}
 		byte[] bytes = baos.toByteArray();
 
-		String encoded = Base64.getEncoder().encodeToString(bytes);
+		encodedImage = Base64.getEncoder().encodeToString(bytes);
 
-		SharingsControl.getTagsOfImage(encoded);
+		SharingsControl.getTagsOfImage(encodedImage);
 		dtrpnTagspane.setText(String.join(", ", Data.tags));
 	}
 

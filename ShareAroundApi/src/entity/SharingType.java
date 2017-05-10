@@ -12,31 +12,27 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 /**
- * Typ zdie¾ania - požièanie, kúpa a iné
+ * The type of sharing.
+ * 
  * @author ondryk
  *
  */
 @Entity
-@Table(name="sharingtype")
-@NamedQuery(name="entity.sharingType.getAll", query="select st from SharingType st")
-public class SharingType implements Serializable{
-	
-	/**
-	 * 
-	 */
+@Table(name = "sharingtype")
+@NamedQuery(name = "entity.sharingType.getAll", query = "select st from SharingType st")
+public class SharingType implements Serializable {
+
 	private static final long serialVersionUID = 2413459041500673677L;
 
 	@Id
-	@GeneratedValue( strategy= GenerationType.AUTO )
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
-	
+
 	private String name;
-	
-	@OneToMany(mappedBy="type")
+
+	@OneToMany(mappedBy = "type")
 	private List<Sharing> sharings;
 
-	
-	
 	public long getId() {
 		return id;
 	}
@@ -65,7 +61,8 @@ public class SharingType implements Serializable{
 		super();
 		this.name = name;
 	}
-	
-	public SharingType(){};
+
+	public SharingType() {
+	};
 
 }
