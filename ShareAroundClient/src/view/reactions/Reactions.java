@@ -2,26 +2,31 @@ package view.reactions;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 
 import data.Data;
 import entity.Reaction;
+import utils.PropertiesWrapper;
 import view.TableWindow;
 
 
+
 /**
+ * Reactions to my sharing screen.
  * 
  * @author ondryk
- *
+ * @author thecodecook
  */
 public class Reactions extends TableWindow {
 
-	
-	
+	private static final long serialVersionUID = -3018811350615198890L;
+	private static final String LOCALIZATION = "locale.app";
+
 	protected JButton btnDetail;
-	
 		
 	/**
 	 * Create the frame.
@@ -30,34 +35,31 @@ public class Reactions extends TableWindow {
 
 		super();
 		
-		columnNames = new String[]{"Užívate¾", "Popis", "Dátum"};
-		setTitle("Reakcie na moje zdie¾anie");
+		ResourceBundle rb = ResourceBundle.getBundle(LOCALIZATION,
+				Locale.forLanguageTag(PropertiesWrapper.getProperties().getProperty("locale")));
+
+		columnNames = new String[]{rb.getString("user"), rb.getString("sharing.desc"), rb.getString("date")};
+		setTitle(rb.getString("sharingreaction.title"));
 		
 		populateTable();
 		
-		btnDetail = new JButton("Detail");	
+		btnDetail = new JButton("Detail");
+		sidePanel.add(btnDetail, "1, 4");
 			
-		btnDetail.setBounds(412, 220, 89, 23);
-		contentPane.add(btnDetail);
 		btnDetail.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int index = table.getSelectedRow();
-				if (index < 0) 
-				{
-					JOptionPane.showMessageDialog(contentPane, "Vyberte riadok");
-				}
-				else
-				{
+				if (index < 0) {
+					JOptionPane.showMessageDialog(contentPane, rb.getString("app.warning.notSelected"),
+							rb.getString("app.warning.title"), JOptionPane.WARNING_MESSAGE);
+				} else {
 					ReactionDetail reactionDetailWindow = new ReactionDetail(Data.reactions.get(index));
 					reactionDetailWindow.setVisible(true);
 				}
-				
 			}
 		});
-		
 				
 	}
-	
 	
 	protected void addRows()
 	{
@@ -72,6 +74,10 @@ public class Reactions extends TableWindow {
 			
 			model.addRow(values);
 		}
+	}
+	
+	protected void updateUI() {
+		btnDetail.setEnabled(table.getSelectedRow() >= 0);
 	}
 
 }

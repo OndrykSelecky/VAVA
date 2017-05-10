@@ -31,7 +31,7 @@ public class AllSharings extends Sharings {
 
 		super();
 
-		columnNames = new String[] { rb.getString("sharing.author"), rb.getString("sharing.label"),
+		columnNames = new String[] { rb.getString("sharing.type"), rb.getString("sharing.label"),
 				rb.getString("sharing.price"), rb.getString("sharing.author") };
 		populateTable();
 		setTitle(MessageFormat.format(rb.getString("allsharings.title"), Data.group.getName()));

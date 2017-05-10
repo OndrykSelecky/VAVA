@@ -259,7 +259,6 @@ public class AddSharing extends JFrame {
 		this.dispose();
 	}
 
-
 	/**
 	 * Prepares image to be sent for taggig/labeling.
 	 * 

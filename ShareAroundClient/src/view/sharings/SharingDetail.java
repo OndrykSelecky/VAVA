@@ -10,6 +10,7 @@ import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
 
+import data.Data;
 import entity.Sharing;
 import utils.PropertiesWrapper;
 import view.reactions.AddReaction;
@@ -130,7 +131,7 @@ public class SharingDetail extends JFrame {
 
 		JButton btnReact = new JButton(rb.getString("sharing.react"));
 		getContentPane().add(btnReact, "4, 12, right, top");
-
+		
 		StringBuffer userDesc = new StringBuffer();
 
 		if (sharing.getShowAddress() == true) {
@@ -159,6 +160,8 @@ public class SharingDetail extends JFrame {
 			}
 		});
 
+		btnReact.setEnabled(Data.user.getId() != sharing.getUser().getId());
+		
 	}
 
 	protected void closeWindow() {
